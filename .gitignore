@@ -1,0 +1,94 @@
+# --- Backend (Python / Flask) ---
+
+# Byte-compiled / optimized / DLL files
+backend/__pycache__/
+backend/*.py[cod]
+backend*$py.class
+
+# Virtual environment
+backend/venv/
+backend/env/
+backend/.env
+
+# Distribution / packaging
+backend/build/
+backend/dist/
+backend/*.egg-info/
+backend/.eggs/
+
+# PyInstaller
+backend/*.manifest
+backend/*.spec
+
+# mypy
+backend/.mypy_cache/
+
+# Coverage reports
+backend/.coverage
+backend/htmlcov/
+backend/.pytest_cache/
+
+# IDE files
+backend/.vscode/
+backend/.idea/
+backend/.ropeproject/
+
+# Logs and databases
+backend/*.log
+backend/*.sqlite3
+backend/debug.log
+
+# OS files
+backend.DS_Store
+backend/.DS_Store
+
+# Flask instance folder
+backend/instance/
+
+# Video files to ignore
+backend/**/*.mp4
+backend/**/*.avi
+backend/**/*.mov
+backend/**/*.mkv
+backend/**/*.flv
+backend/**/*.wmv
+
+# --- Frontend (React / Node.js) ---
+
+# dependencies
+frontend/node_modules/
+
+# production build
+frontend/build/
+
+# misc
+frontend.DS_Store
+frontend/.DS_Store
+
+# local env files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# IDE files
+frontend/.vscode/
+frontend/.idea/
+
+# npm logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Video files to ignore
+frontend/**/*.mp4
+frontend/**/*.avi
+frontend/**/*.mov
+frontend/**/*.mkv
+frontend/**/*.flv
+frontend/**/*.wmv
+
+# lock files (optional, but generally should be committed)
+# frontend/package-lock.json
+# frontend/yarn.lock
