@@ -7,7 +7,7 @@ import QRModal from './components/QRModal';
 import { Spinner } from './components/Icons';
 import { MOCK_CHANNELS, MOCK_VIDEOS } from './mockData';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'http://192.168.4.20:5000';
 const USE_MOCK_DATA = false;
 
 const App: React.FC = () => {
@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [modalVideo, setModalVideo] = useState<Video | null>(null);
+  const [showProcessModal, setShowProcessModal] = useState(false);
 
   const fetchVideos = useCallback(async () => {
     setIsLoading(true);
@@ -185,47 +186,115 @@ const handleRefreshChannel = async (channel: string) => {
   }
 };
 
+return (
+  <>
+    {/* Top Header Bar with Process Button */}
+    <div className="bg-gray-800 px-6 py-4 flex justify-between items-center border-b border-gray-700">
+      <h1 className="text-2xl font-bold text-white">QR Video Processor</h1>
+      <button
+        onClick={() => setShowProcessModal(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+      >
+        + Process Video
+      </button>
+    </div>
 
-  return (
-    <>
-      <div className="flex h-screen bg-gray-900 text-white font-sans">
-        <ChannelList
-  channels={channels}
-  selectedChannel={selectedChannel}
-  onSelectChannel={setSelectedChannel}
-  onAddChannel={handleAddChannel}
-  onDeleteChannel={handleDeleteChannel}
-  onRefreshChannel={handleRefreshChannel}  // <-- new prop here
-/>
+    {/* Main layout: sidebar and content */}
+    <div className="flex flex-col md:flex-row h-[calc(100vh-72px)] bg-gray-900 text-white font-sans">
+      <ChannelList
+        channels={channels}
+        selectedChannel={selectedChannel}
+        onSelectChannel={setSelectedChannel}
+        onAddChannel={handleAddChannel}
+        onDeleteChannel={handleDeleteChannel}
+        onRefreshChannel={handleRefreshChannel}
+      />
 
-        <main className="flex-1 p-8 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <Spinner className="w-12 h-12 text-blue-500" />
+      <main className="flex-1 p-8 overflow-y-auto">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <Spinner className="w-12 h-12 text-blue-500" />
+          </div>
+        ) : (
+          <>
+            {selectedChannel ? (
+  <>
+    <h2 className="text-xl font-semibold mb-4 text-white">
+      <span className="italic">{selectedChannel}</span>'s latest video codes
+    </h2>
+    <VideoList videos={filteredVideos} onViewCodes={setModalVideo} />
+  </>
+) : (
+  <div className="text-center py-16">
+    <h3 className="text-2xl text-gray-400">Select a channel</h3>
+    <p className="text-gray-500 mt-2">
+      Choose a channel from the sidebar to view its videos, or add a new one.
+    </p>
+  </div>
+)}
+
+
+
+
+          </>
+        )}
+      </main>
+    </div>
+
+    {/* Modal to process video */}
+    <QRModal video={modalVideo} onClose={() => setModalVideo(null)} apiBaseUrl={API_BASE_URL} />
+
+    {showProcessModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+        <div className="bg-white text-black rounded-lg shadow-lg w-full max-w-md p-6 relative">
+          <h2 className="text-xl font-semibold mb-4">Process YouTube Video</h2>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const urlInput = form.elements.namedItem('url') as HTMLInputElement;
+              const url = urlInput.value.trim();
+              if (!url) return;
+              await handleProcessVideo(url);
+              setShowProcessModal(false);
+            }}
+          >
+            <input
+              type="text"
+              name="url"
+              placeholder="Paste YouTube video URL"
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+              required
+            />
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowProcessModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 ${
+                  isProcessing ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Processing...' : 'Process'}
+              </button>
             </div>
-          ) : (
-            <>
-              <ProcessVideoForm 
-  onProcessVideo={handleProcessVideo}
-  isLoading={isProcessing}
-  error={error}
-/>
-              {selectedChannel ? (
-                <VideoList videos={filteredVideos} onViewCodes={setModalVideo} />
-              ) : (
-                <div className="text-center py-16">
-                  <h3 className="text-2xl text-gray-400">Select a channel</h3>
-                  <p className="text-gray-500 mt-2">Choose a channel from the sidebar to view its videos, or add a new one.</p>
-                </div>
-              )}
-            </>
-          )}
-        </main>
+          </form>
+        </div>
       </div>
+    )}
+  </>
+);
 
-      <QRModal video={modalVideo} onClose={() => setModalVideo(null)} apiBaseUrl={API_BASE_URL} />
-    </>
-  );
 };
 
+
+
 export default App;
+

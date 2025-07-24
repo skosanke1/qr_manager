@@ -77,7 +77,7 @@ def get_youtube_channel(url):
 
 def download_video(url, output_path):
     # Uses yt-dlp (or youtube-dl fallback)
-    cmd = f'yt-dlp -f best -o "{output_path}" "{url}"'
+    cmd = f'yt-dlp -o "{output_path}" "{url}"'
     result = subprocess.run(cmd, shell=True)
     return result.returncode == 0
 
